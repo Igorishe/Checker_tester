@@ -18,27 +18,28 @@ def get_proxies_txt(file):
 
 
 def check_all(message, bot):
-    # proxy_list = get_proxies_txt('1.txt')
     proxy_list = parse_data(get_proxies_by_api())
+    msg = ''
     for i in range(len(proxy_list)):
         port = proxy_list[i][2]
-        msg = check_req(port, proxy_list[i][0])
-        bot.send_message(message.chat.id, msg)
-    bot.send_message(message.chat.id, 'Finished!')
+        msg_one = check_req(port, proxy_list[i][0])
+        msg += msg_one
+    bot.send_message(message.chat.id, msg)
+
 
 
 def check_req(port, name='1'):
     if name == '1':
         try:
-            r = requests.get('https://2ip.ru/', proxies={'http': f'http://batch:8sdf91sx@37.1.221.45:{port}',
+            r = requests.get('http://2ip.ru/', proxies={'http': f'http://batch:8sdf91sx@37.1.221.45:{port}',
                                                          'https': f'https://batch:8sdf91sx@37.1.221.45:{port}'})
-            return f'Порт {port} код {str(r.status_code)} Удачно'
+            return f'\u2705 Порт {port} код {str(r.status_code)} Удачно \n'
         except requests.exceptions.ProxyError:
-            return f'Порт {port} Неудачно'
+            return f'\u274c Порт {port} Неудачно \n'
     else:
         try:
-            r = requests.get('https://2ip.ru/', proxies={'http': f'http://batch:8sdf91sx@37.1.221.45:{port}',
+            r = requests.get('http://2ip.ru/', proxies={'http': f'http://batch:8sdf91sx@37.1.221.45:{port}',
                                                          'https': f'https://batch:8sdf91sx@37.1.221.45:{port}'})
-            return f'{name} код {str(r.status_code)} Удачно'
+            return f'\u2705 {name} код {str(r.status_code)} Удачно \n'
         except requests.exceptions.ProxyError:
-            return f'{name} Неудачно'
+            return f'\u274c {name} Неудачно \n'
