@@ -27,19 +27,23 @@ def check_all(message, bot):
     bot.send_message(message.chat.id, msg)
 
 
-
 def check_req(port, name='1'):
-    if name == '1':
-        try:
-            r = requests.get('http://2ip.ru/', proxies={'http': f'http://batch:8sdf91sx@37.1.221.45:{port}',
-                                                         'https': f'https://batch:8sdf91sx@37.1.221.45:{port}'})
+    try:
+        r = requests.get('http://2ip.ru/', proxies={'http': f'http://batch:8sdf91sx@37.1.221.45:{port}',
+                                                    'https': f'https://batch:8sdf91sx@37.1.221.45:{port}'})
+        if r.status_code == 200 and name == '1':
             return f'\u2705 Порт {port} код {str(r.status_code)} Удачно \n'
-        except requests.exceptions.ProxyError:
-            return f'\u274c Порт {port} Неудачно \n'
-    else:
-        try:
-            r = requests.get('http://2ip.ru/', proxies={'http': f'http://batch:8sdf91sx@37.1.221.45:{port}',
-                                                         'https': f'https://batch:8sdf91sx@37.1.221.45:{port}'})
+        elif r.status_code == 200 and len(name) > 1:
             return f'\u2705 {name} код {str(r.status_code)} Удачно \n'
-        except requests.exceptions.ProxyError:
+        elif r.status_code != 200 and name == '1':
+            return f'\u274c Порт {port} код не 200 \n'
+        elif r.status_code != 200 and len(name) > 1:
+            return f'\u274c {name} Код не 200 \n'
+        else:
+            return 'Something went wrong'
+    except requests.exceptions.ProxyError:
+        if name == '1':
+            return f'\u274c Порт {port} Неудачно \n'
+        else:
             return f'\u274c {name} Неудачно \n'
+
