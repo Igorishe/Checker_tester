@@ -22,8 +22,22 @@ def check_all(message, bot):
     msg = ''
     for i in range(len(proxy_list)):
         port = proxy_list[i][2]
-        msg_one = check_req(port, proxy_list[i][0])
+        name = proxy_list[i][0]
+        msg_one = check_req(port, name)
         msg += msg_one
+    bot.send_message(message.chat.id, msg)
+
+
+def check_country(message, bot):
+    proxy_list = parse_data(get_proxies_by_api())
+    msg = ''
+    for i in range(len(proxy_list)):
+        name = proxy_list[i][0]
+        country = name.split(',')[0]
+        if country == str(message.text):
+            port = proxy_list[i][2]
+            msg_one = check_req(port, name)
+            msg += msg_one
     bot.send_message(message.chat.id, msg)
 
 

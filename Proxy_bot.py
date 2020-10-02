@@ -1,5 +1,5 @@
 import telebot
-from Proxy_services import check_all, check_one_port
+from Proxy_services import check_all, check_one_port, check_country
 from telebot import types
 
 bot = telebot.TeleBot("1206950757:AAFjG_6ofJW9J9A_K6uOeGYq3eeGnEH8qbo")
@@ -19,6 +19,8 @@ def get_text_messages(message):
         keyboard.add(key_all)
         key_one = types.InlineKeyboardButton(text="Check one port", callback_data='call_one')
         keyboard.add(key_one)
+        key_c = types.InlineKeyboardButton(text="Check country", callback_data='call_country')
+        keyboard.add(key_c)
         bot.send_message(message.from_user.id, text='Выбери тип проверки', reply_markup=keyboard)
 
     elif message.text == '/check_all':
@@ -48,6 +50,10 @@ def callback_worker(call):
     elif call.data == 'call_one':
         sent = bot.send_message(call.message.chat.id, 'Введите порт')
         bot.register_next_step_handler(sent, check_one_port, bot)
+
+    elif call.data == 'call_country':
+        sent = bot.send_message(call.message.chat.id, 'Какую страну чекаем?')
+        bot.register_next_step_handler(sent, check_country, bot)
 
 
 # Постоянный опрос бота в Телеграме
