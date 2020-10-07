@@ -1,5 +1,6 @@
 import requests
 from API_functions import get_proxies_by_api, parse_data
+import json
 
 
 def check_one_port(message, bot):
@@ -21,6 +22,8 @@ def check_all(message, bot):
     proxy_list = parse_data(get_proxies_by_api())
     msg = ''
     for i in range(len(proxy_list)):
+        if i < len(proxy_list)/2 + 1 and i > len(proxy_list)/2:
+            bot.send_message(message.chat.id, 'Уже половину чекнул, осталось немного')
         port = proxy_list[i][2]
         name = proxy_list[i][0]
         msg_one = check_req(port, name)
@@ -60,4 +63,16 @@ def check_req(port, name='1'):
             return f'\u274c Порт {port} Неудачно \n'
         else:
             return f'\u274c {name} Неудачно \n'
+
+
+def check_req_ipinfo(port):
+    try:
+        r = requests.get('https://ipinfo.io/json?token=76f257fa5ecb74', proxies={'http': f'http://batch:8sdf91sx@37.1.221.45:{port}',
+                                                    'https': f'https://batch:8sdf91sx@37.1.221.45:{port}'})
+        resp = json.loads(r.text)
+        return resp['ip']
+    except requests.exceptions.ProxyError:
+        return 'Bad'
+
+
 
