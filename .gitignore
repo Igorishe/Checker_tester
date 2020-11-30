@@ -139,3 +139,10 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
+*.ini
+.git/*
+.idea
+.DS_Store
+.AppleDouble
+.LSOverride
+
