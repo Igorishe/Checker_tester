@@ -37,4 +37,5 @@ def parse_data(api_obj):
         port = ip[0].split(':')[1]
         if len(name.split(',')) > 2:
             mobile_pack.append([name, address, port])
+    mobile_pack.sort(key=lambda i: i[0])
     return mobile_pack

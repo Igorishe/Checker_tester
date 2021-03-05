@@ -117,3 +117,31 @@ def check_rotation(port):
         return '\u2705 Rotation works'
     else:
         return '\u274c No rotation'
+
+
+run_trigger = True
+
+
+def timer_check(message, bot):
+    sleep_time = int(message.text) * 3600 - 600
+    global run_trigger
+    run_trigger = True
+    while run_trigger:
+        proxy_list = parse_data(get_proxies_by_api())
+        msg = ''
+        for i in range(len(proxy_list)):
+            port = proxy_list[i][2]
+            name = proxy_list[i][0]
+            msg_one = check_req(port, name)
+            msg += msg_one
+        bot.send_message(message.chat.id, msg)
+        time.sleep(sleep_time)
+
+
+@show_in_bot
+def timer_check_off(text):
+    if text == '+':
+        global run_trigger
+        run_trigger = False
+        return 'Остановлено'
+    return 'Отбой остановки'
