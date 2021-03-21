@@ -60,6 +60,8 @@ def check_country(text):
             port = proxy_list[i][2]
             msg_one = check_req(port, name)
             msg += msg_one
+    if msg == '':
+        return 'Wrong country'
     return msg
 
 
@@ -73,7 +75,8 @@ def check_req(port, name=None):
                          f'{proxy_login}:{proxy_pass}@{proxy_ip}:{port}'),
                 'https': ('https://'
                           f'{proxy_login}:{proxy_pass}@{proxy_ip}:{port}')
-            }
+            },
+            timeout=(5, 30),
         )
         if r.status_code == 200 and name is None:
             return f'\u2705 Порт {port}\n'
@@ -84,7 +87,7 @@ def check_req(port, name=None):
         elif r.status_code != 200 and name is not None:
             return f'\u274c {name}\n'
         return 'Something went wrong'
-    except requests.exceptions.ProxyError:
+    except (requests.exceptions.ProxyError, requests.exceptions.ReadTimeout):
         if name is None:
             return f'\u2753 Порт {port}\n'
         return f'\u2753 {name}\n'

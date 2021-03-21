@@ -1,9 +1,14 @@
+import configparser
+import time
+
+import requests
 import telebot
+from telebot import types
+
 from Proxy_services import (
     check_all, check_one_port, check_country, check_rotation,
 )
-from telebot import types
-import configparser
+from Keyboard_services import country_keyboard
 
 
 config = configparser.ConfigParser()
@@ -78,7 +83,11 @@ def callback_worker(call):
         bot.register_next_step_handler(sent, check_one_port, bot)
 
     elif call.data == 'call_country':
-        sent = bot.send_message(call.message.chat.id, 'Какую страну чекаем?')
+        sent = bot.send_message(
+            call.message.chat.id,
+            'Какую страну чекаем?',
+            reply_markup=country_keyboard()
+        )
         bot.register_next_step_handler(sent, check_country, bot)
 
     elif call.data == 'call_rotation':
@@ -86,4 +95,8 @@ def callback_worker(call):
         bot.register_next_step_handler(sent, check_rotation, bot)
 
 
-bot.polling(none_stop=True, interval=0)
+while True:
+    try:
+        bot.polling(none_stop=True)
+    except requests.exceptions.ReadTimeout:
+        time.sleep(15)
