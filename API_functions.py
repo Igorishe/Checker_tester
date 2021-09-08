@@ -1,27 +1,28 @@
-from requests import Request, Session
 import json
-import configparser
+import os
 
+import requests
+from dotenv import load_dotenv
 
-config = configparser.ConfigParser()
+load_dotenv()
 
-config.read('config.ini')
-auth_id = config['rs']['id']
-auth_key = config['rs']['key']
+auth_id = os.getenv('AUTH_ID')
+auth_key = os.getenv('AUTH_KEY')
+api_host = os.getenv('API_HOST')
 
 
 def get_proxies_by_api():
-    """Получает все пакеты с РС"""
-    s = Session()
+    """Получает все пакеты по API"""
     headers = {
         'X-Auth-ID': auth_id,
         'X-Auth-Key': auth_key
     }
-    url = 'https://rsocks.net/api/v1/file/get-proxy'
-    req = Request('POST', url, data='', headers=headers)
-    prepped = s.prepare_request(req)
-    resp = s.send(prepped)
-    return resp.text
+    response = requests.post(
+        api_host,
+        headers=headers,
+        data=''
+    )
+    return response.text
 
 
 def parse_data(api_obj):
@@ -29,7 +30,6 @@ def parse_data(api_obj):
     x = json.loads(api_obj)
     id_pack = x['packages'].keys()
     mobile_pack = []
-
     for id in id_pack:
         name = x['packages'][id]['name']
         ip = x['packages'][id]['ips']

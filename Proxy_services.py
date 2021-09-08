@@ -1,21 +1,23 @@
-import requests
-from API_functions import get_proxies_by_api, parse_data
 import json
+import os
 import time
-import configparser
 
+import requests
+from dotenv import load_dotenv
 
-config = configparser.ConfigParser()
+from API_functions import get_proxies_by_api, parse_data
 
-config.read('config.ini')
-proxy_login = config['proxy']['login']
-proxy_pass = config['proxy']['password']
-proxy_ip = config['proxy']['address']
-proxy_url = config['proxy']['url']
-ipinfo_token = config['ipinfo']['token']
+load_dotenv()
+
+proxy_login = os.getenv('PROXY_LOGIN')
+proxy_pass = os.getenv('PROXY_PASSWORD')
+proxy_ip = os.getenv('PROXY_HOST')
+proxy_url = os.getenv('CHECK_URL')
+ipinfo_token = os.getenv('IPINFO_TOKEN')
 
 
 def show_in_bot(func):
+    """Декоратор для вывода результата работы функции в бот"""
     def wrapper(message, bot):
         text = str(message.text)
         msg = func(text)
@@ -31,7 +33,7 @@ def check_one_port(port):
 
 @show_in_bot
 def check_all(text):
-    """Проверка всех мобильных прокси"""
+    """Проверка всех мобильных прокси на аккаунте"""
     if text == '+':
         proxy_list = parse_data(get_proxies_by_api())
         msg = ''
@@ -113,7 +115,7 @@ def check_ipinfo(port):
 
 @show_in_bot
 def check_rotation(port):
-    """Проверка ротации"""
+    """Проверка наличия ротации IP-адреса"""
     ip1 = check_ipinfo(port)
     time.sleep(300)
     ip2 = check_ipinfo(port)

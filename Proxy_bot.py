@@ -1,22 +1,17 @@
-import configparser
-import time
+import os
 
-import requests
 import telebot
+from dotenv import load_dotenv
 from telebot import types
 
-from Proxy_services import (
-    check_all, check_one_port, check_country, check_rotation,
-)
 from Keyboard_services import country_keyboard
+from Proxy_services import (check_all, check_country, check_one_port,
+                            check_rotation)
 
+load_dotenv()
 
-config = configparser.ConfigParser()
-config.read('config.ini')
-tg = config['telegram']
-token = tg['token']
-allowed_users = [int(i) for i in config['users']['pack'].split(',')]
-
+token = os.getenv('BOT_TOKEN')
+allowed_users = [int(i) for i in os.getenv('ALLOWED_USERS').split(',')]
 bot = telebot.TeleBot(token)
 
 
@@ -95,8 +90,4 @@ def callback_worker(call):
         bot.register_next_step_handler(sent, check_rotation, bot)
 
 
-while True:
-    try:
-        bot.polling(none_stop=True)
-    except requests.exceptions.ReadTimeout:
-        time.sleep(15)
+bot.polling()
